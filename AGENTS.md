@@ -1,3 +1,7 @@
+## Language
+
+Write all human-readable text in the repository in English, including documentation, comments, and user-facing messages.
+
 ## Agent skills
 
 ### Issue tracker

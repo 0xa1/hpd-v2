@@ -1,0 +1,27 @@
+# Adapted from the official RMK RP2040 split template. Use the same task in CI and locally.
+[tasks.build]
+command = "cargo"
+args = ["build", "--locked", "--release", "--bins"]
+
+[tasks.hex-right]
+command = "cargo"
+args = ["objcopy", "--locked", "--release", "--bin", "central", "--", "-O", "ihex", "hpd-v2-right-central.hex"]
+dependencies = ["build"]
+
+[tasks.hex-left]
+command = "cargo"
+args = ["objcopy", "--locked", "--release", "--bin", "peripheral", "--", "-O", "ihex", "hpd-v2-left-peripheral.hex"]
+dependencies = ["build"]
+
+[tasks.uf2-right]
+command = "cargo"
+args = ["hex-to-uf2", "--input-path", "hpd-v2-right-central.hex", "--output-path", "hpd-v2-right-central.uf2", "--family", "rp2040"]
+dependencies = ["hex-right"]
+
+[tasks.uf2-left]
+command = "cargo"
+args = ["hex-to-uf2", "--input-path", "hpd-v2-left-peripheral.hex", "--output-path", "hpd-v2-left-peripheral.uf2", "--family", "rp2040"]
+dependencies = ["hex-left"]
+
+[tasks.uf2]
+dependencies = ["uf2-right", "uf2-left"]

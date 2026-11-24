@@ -1,0 +1,13 @@
+version: 2
+updates:
+  - package-ecosystem: cargo
+    directory: /
+    schedule:
+      interval: cron
+      cronjob: "0 9 * * *"
+      timezone: Etc/UTC
+    allow:
+      - dependency-name: rmk
+    versioning-strategy: increase
+    cooldown:
+      default-days: 0

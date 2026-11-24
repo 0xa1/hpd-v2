@@ -1,0 +1,36 @@
+name: Firmware
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build both HPD v2 UF2 files
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Install build tools
+        run: |
+          rustup show
+          cargo install --locked cargo-make@0.37.24 flip-link@0.1.12 cargo-binutils@0.4.0 cargo-hex-to-uf2@0.1.2
+      - name: Build and require both UF2 files
+        run: |
+          cargo make uf2 --release
+          test -s hpd-v2-right-central.uf2
+          test -s hpd-v2-left-peripheral.uf2
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: hpd-v2-uf2
+          path: |
+            hpd-v2-right-central.uf2
+            hpd-v2-left-peripheral.uf2
+          if-no-files-found: error
